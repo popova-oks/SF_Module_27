@@ -22,7 +22,7 @@ Chat::~Chat() {
 
 void Chat::receive_message() {
     if(messages_ == nullptr) {
-        messages_ = new Messages<std::string>();
+        messages_ = new Messages();
     }
     messages_->get_messages(this);
 }
@@ -70,61 +70,61 @@ nlohmann::json Chat::update(nlohmann::json& json) {
 }
 
 void Chat::add_newClient(const nlohmann::json& json) {
-    nlohmann::json dateUsers;
+    nlohmann::json dataUsers;
     if(is_checkingFile(path_Clients_)) {
-        dateUsers = readFile(path_Clients_);
+        dataUsers = readFile(path_Clients_);
     } else {
         // Если файл был пустой или его не существовало, создаем новый массив JSON
-        dateUsers = nlohmann::json::array();
+        dataUsers = nlohmann::json::array();
     }
-    dateUsers.push_back(json);
-    writeFile(path_Clients_, dateUsers);
+    dataUsers.push_back(json);
+    writeFile(path_Clients_, dataUsers);
 }
 
 void Chat::add_newMessage(const nlohmann::json& json) {
-    nlohmann::json dateMessages;
+    nlohmann::json dataMessages;
     if(is_checkingFile(path_Messages_)) {
-        dateMessages = readFile(path_Messages_);
+        dataMessages = readFile(path_Messages_);
     } else {
         // Если файл был пустой или его не существовало, создаем новый массив JSON
-        dateMessages = nlohmann::json::array();
+        dataMessages = nlohmann::json::array();
     }
-    dateMessages.push_back(json);
-    writeFile(path_Messages_, dateMessages);
+    dataMessages.push_back(json);
+    writeFile(path_Messages_, dataMessages);
 }
 
 nlohmann::json Chat::list_observers() {
-    nlohmann::json dateUsers;
+    nlohmann::json dataUsers;
     if(is_checkingFile(path_Clients_)) {
         nlohmann::json json_data = readFile(path_Clients_);
         if(!json_data.empty()) {
             for(size_t i = 0; i < json_data.size(); i++) {
                 if(json_data[i]["isAutorized"] == true) {
-                    dateUsers.push_back(json_data[i]);
+                    dataUsers.push_back(json_data[i]);
                 }
             }
         } else {
-            dateUsers["message"] = "No users!";
+            dataUsers["message"] = "No users!";
         }
     }
-    return dateUsers;
+    return dataUsers;
 }
 
 nlohmann::json Chat::list_messages(const std::string& login) {
-    nlohmann::json dateMessages;
+    nlohmann::json dataMessages;
     if(is_checkingFile(path_Messages_)) {
         nlohmann::json json_data = readFile(path_Messages_);
         if(!json_data.empty()) {
             for(size_t i = 0; i < json_data.size(); i++) {
                 if(json_data[i]["receiver"] == login.c_str()) {
-                    dateMessages.push_back(json_data[i]);
+                    dataMessages.push_back(json_data[i]);
                 }
             }
         } else {
-            dateMessages["message"] = "No messages!";
+            dataMessages["message"] = "No messages!";
         }
     }
-    return dateMessages;
+    return dataMessages;
 }
 
 bool Chat::is_checkClient(const std::string& login, const std::string& password) {

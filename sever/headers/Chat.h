@@ -17,7 +17,7 @@ class Chat : public ISubject {
   private:  
     std::string path_Clients_;
     std::string path_Messages_;
-    Messages<std::string>* messages_ = nullptr;
+    Messages* messages_ = nullptr;
 
     bool is_checkClient(const std::string& login, const std::string& password);
     void isAutorized(const std::string& login);
