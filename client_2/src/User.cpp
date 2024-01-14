@@ -28,6 +28,11 @@ bool User::update(const int event) {
         mess_toServer["password"] = password_;
         mess_toServer["receiver"] = receiver_;
         mess_toServer["message"] = message_;
+        // Получаем текущее время
+        auto currentTime = std::chrono::system_clock::now();
+        std::time_t timestamp = std::chrono::system_clock::to_time_t(currentTime);
+        // Добавляем время в формате timestamp в JSON
+        mess_toServer["timestamp"] = timestamp;
     } else if(event == 4) {
         mess_toServer["key"] = "4";
         mess_toServer["login"] = login_;
@@ -36,9 +41,9 @@ bool User::update(const int event) {
         mess_toServer["key"] = "5";
         mess_toServer["login"] = login_;
         mess_toServer["password"] = password_;
-    } 
-    //else if(event == 6) {
-        //mess_toServer["key"] = "exit";
+    }
+    // else if(event == 6) {
+    // mess_toServer["key"] = "exit";
     //}
     if(messages_ != nullptr) {
         mess_fromServer = messages_->send_message(mess_toServer);
@@ -54,7 +59,7 @@ bool User::update(const int event) {
                     if(item["login"] == login_ && item["password"] == password_) {
                         curr_user = item["login"];
                     }
-                } 
+                }
             }
             if(mess_fromServer.find("message") != mess_fromServer.end()) {
                 std::cout << mess_fromServer["message"] << std::endl;
@@ -69,9 +74,13 @@ bool User::update(const int event) {
         if(!mess_fromServer.empty()) {
             std::cout << "Your messages: " << std::endl;
             for(const auto& item : mess_fromServer) {
-                if(item.find("receiver") != item.end() && item["receiver"] == login_) {
-                    std::cout << "Message: " << item["message"] << "\tfrom: " << item["sender"] << std::endl;
-                }
+                std::time_t timestamp = item["timestamp"];
+                std::tm* timeinfo = std::localtime(&timestamp);
+                // Форматируем время в строку
+                std::ostringstream oss;
+                oss << std::put_time(timeinfo, "%Y-%m-%d %H:%M:%S");
+                std::cout << "Message: " << item["message"] << "\tfrom: " << item["sender"]
+                          << "\tTime: " << oss.str() << std::endl;
             }
             if(mess_fromServer.find("message") != mess_fromServer.end()) {
                 std::cout << mess_fromServer["message"] << std::endl;
@@ -102,7 +111,7 @@ bool User::update(const int event) {
         } else {
             return false;
         }
-    } 
+    }
     /*
     else if(event == 6) {
         if(!mess_fromServer.empty()) {
