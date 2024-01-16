@@ -1,24 +1,10 @@
 #include "../headers/Chat.h"
-#include "../headers/jsonHandler.h"
+#include "../headers/Logger.h"
 #include <fstream>
 #include <iostream>
 #include <limits>
 
-Chat::Chat() : path_Clients_{"./clients.json"}, path_Messages_{"./messages.json"} {}
-
-Chat::~Chat() {
-    //try {
-        // Удаление файлов
-        //std::filesystem::remove(path_Clients_);
-        //std::filesystem::remove(path_Messages_);
-        //std::cout << "File deleted successfully" << std::endl;
-    //} catch(const std::exception& e) {
-        //std::cerr << "Error deleting file: " << e.what() << std::endl;
-    //}
-    if(messages_ != nullptr) {
-        delete messages_;
-    }
-}
+Chat::Chat() : path_Clients_{"./clients.json"}, path_Messages_{"./log.json"} {}
 
 void Chat::receive_message() {
     if(messages_ == nullptr) {
@@ -71,32 +57,35 @@ nlohmann::json Chat::update(nlohmann::json& json) {
 
 void Chat::add_newClient(const nlohmann::json& json) {
     nlohmann::json dataUsers;
-    if(is_checkingFile(path_Clients_)) {
-        dataUsers = readFile(path_Clients_);
+    Logger logger;
+    if(logger.is_checkingFile(path_Clients_)) {
+        dataUsers = logger.readFile(path_Clients_);
     } else {
         // Если файл был пустой или его не существовало, создаем новый массив JSON
         dataUsers = nlohmann::json::array();
     }
     dataUsers.push_back(json);
-    writeFile(path_Clients_, dataUsers);
+    logger.writeFile(path_Clients_, dataUsers);
 }
 
 void Chat::add_newMessage(const nlohmann::json& json) {
     nlohmann::json dataMessages;
-    if(is_checkingFile(path_Messages_)) {
-        dataMessages = readFile(path_Messages_);
+    Logger logger;
+    if(logger.is_checkingFile(path_Messages_)) {
+        dataMessages = logger.readFile(path_Messages_);
     } else {
         // Если файл был пустой или его не существовало, создаем новый массив JSON
         dataMessages = nlohmann::json::array();
     }
     dataMessages.push_back(json);
-    writeFile(path_Messages_, dataMessages);
+    logger.writeFile(path_Messages_, dataMessages);
 }
 
 nlohmann::json Chat::list_observers() {
     nlohmann::json dataUsers;
-    if(is_checkingFile(path_Clients_)) {
-        nlohmann::json json_data = readFile(path_Clients_);
+    Logger logger;
+    if(logger.is_checkingFile(path_Clients_)) {
+        nlohmann::json json_data = logger.readFile(path_Clients_);
         if(!json_data.empty()) {
             for(size_t i = 0; i < json_data.size(); i++) {
                 if(json_data[i]["isAutorized"] == true) {
@@ -112,8 +101,9 @@ nlohmann::json Chat::list_observers() {
 
 nlohmann::json Chat::list_messages(const std::string& login) {
     nlohmann::json dataMessages;
-    if(is_checkingFile(path_Messages_)) {
-        nlohmann::json json_data = readFile(path_Messages_);
+    Logger logger;
+    if(logger.is_checkingFile(path_Messages_)) {
+        nlohmann::json json_data = logger.readFile(path_Messages_);
         if(!json_data.empty()) {
             for(size_t i = 0; i < json_data.size(); i++) {
                 if(json_data[i]["receiver"] == login.c_str()) {
@@ -129,8 +119,9 @@ nlohmann::json Chat::list_messages(const std::string& login) {
 
 bool Chat::is_checkClient(const std::string& login, const std::string& password) {
     bool is_check = false;
-    if(is_checkingFile(path_Clients_)) {
-        nlohmann::json json_data = readFile(path_Clients_);
+    Logger logger;
+    if(logger.is_checkingFile(path_Clients_)) {
+        nlohmann::json json_data = logger.readFile(path_Clients_);
         if(!json_data.empty()) {
             for(size_t i = 0; i < json_data.size(); i++) {
                 if(json_data[i]["login"] == login && json_data[i]["password"] == password) {
@@ -145,8 +136,9 @@ bool Chat::is_checkClient(const std::string& login, const std::string& password)
 
 void Chat::isAutorized(const std::string& login) {
     nlohmann::json json_data;
-    if(is_checkingFile(path_Clients_)) {
-        json_data = readFile(path_Clients_);
+    Logger logger;
+    if(logger.is_checkingFile(path_Clients_)) {
+        json_data = logger.readFile(path_Clients_);
         if(!json_data.empty()) {
             for(size_t i = 0; i < json_data.size(); i++) {
                 if(json_data[i]["login"] == login) {
@@ -155,13 +147,14 @@ void Chat::isAutorized(const std::string& login) {
             }
         }
     }
-    writeFile(path_Clients_, json_data);
+    logger.writeFile(path_Clients_, json_data);
 }
 
 void Chat::notAutorized(const std::string& login) {
     nlohmann::json json_data;
-    if(is_checkingFile(path_Clients_)) {
-        json_data = readFile(path_Clients_);
+    Logger logger;
+    if(logger.is_checkingFile(path_Clients_)) {
+        json_data = logger.readFile(path_Clients_);
         if(!json_data.empty()) {
             for(size_t i = 0; i < json_data.size(); i++) {
                 if(json_data[i]["login"] == login) {
@@ -170,5 +163,5 @@ void Chat::notAutorized(const std::string& login) {
             }
         }
     }
-    writeFile(path_Clients_, json_data);
+    logger.writeFile(path_Clients_, json_data);
 }

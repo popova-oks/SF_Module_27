@@ -5,7 +5,7 @@
 class Chat : public ISubject {
   public:
     Chat();
-    virtual ~Chat();
+    virtual ~Chat() {};
     void receive_message();
     nlohmann::json update(nlohmann::json &json) override;
 

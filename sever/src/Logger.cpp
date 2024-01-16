@@ -1,8 +1,8 @@
-#include "../headers/jsonHandler.h"
+#include "../headers/Logger.h"
 #include <fstream>
 #include <iostream>
 
-bool is_checkingFile(const std::string& file_path) {
+bool Logger::is_checkingFile(const std::string& file_path) {
     std::ifstream input_file(file_path);
     if(!input_file.is_open()) {
         return false;
@@ -15,7 +15,7 @@ bool is_checkingFile(const std::string& file_path) {
     return true;
 }
 
-nlohmann::json readFile(const std::string& file_path) {
+nlohmann::json Logger::readFile(const std::string& file_path) {
     std::ifstream input_file(file_path);
     input_file.seekg(0, std::ios::beg);  // Возвращаем указатель чтения в начало файла
     nlohmann::json json_data;
@@ -24,7 +24,7 @@ nlohmann::json readFile(const std::string& file_path) {
     return json_data;
 }
 
-bool writeFile(const std::string& file_path, nlohmann::json& json_data) {
+bool Logger::writeFile(const std::string& file_path, nlohmann::json& json_data) {
     std::ofstream output_file(file_path, std::ios::out);
     if(!output_file.is_open()) {
         std::cout << "The json file isn't open!" << std::endl;

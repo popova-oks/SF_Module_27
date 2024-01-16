@@ -1,6 +1,10 @@
 #include "../headers/User.h"
 #include "nlohmann/json.hpp"
+#include <chrono>
+#include <ctime>
+#include <iomanip>
 #include <iostream>
+
 
 User::User() { messages_ = new Messages<std::string>(); }
 
@@ -74,13 +78,15 @@ bool User::update(const int event) {
         if(!mess_fromServer.empty()) {
             std::cout << "Your messages: " << std::endl;
             for(const auto& item : mess_fromServer) {
-                std::time_t timestamp = item["timestamp"];
-                std::tm* timeinfo = std::localtime(&timestamp);
-                // Форматируем время в строку
-                std::ostringstream oss;
-                oss << std::put_time(timeinfo, "%Y-%m-%d %H:%M:%S");
-                std::cout << "Message: " << item["message"] << "\tfrom: " << item["sender"]
-                          << "\tTime: " << oss.str() << std::endl;
+                if(item.find("receiver") != item.end() && item["receiver"] == login_) {
+                    std::time_t timestamp = item["timestamp"];
+                    std::tm* timeinfo = std::localtime(&timestamp);
+                    // Форматируем время в строку
+                    std::ostringstream oss;
+                    oss << std::put_time(timeinfo, "%Y-%m-%d %H:%M:%S");
+                    std::cout << "Message: " << item["message"] << "\tfrom: " << item["sender"]
+                              << "\tTime: " << oss.str() << std::endl;
+                }
             }
             if(mess_fromServer.find("message") != mess_fromServer.end()) {
                 std::cout << mess_fromServer["message"] << std::endl;
@@ -112,18 +118,6 @@ bool User::update(const int event) {
             return false;
         }
     }
-    /*
-    else if(event == 6) {
-        if(!mess_fromServer.empty()) {
-            if(mess_fromServer.find("message") != mess_fromServer.end()) {
-                std::cout << mess_fromServer["message"] << std::endl;
-            }
-            return true;
-        } else {
-            return false;
-        }
-    }
-    */
     return false;
 }
 

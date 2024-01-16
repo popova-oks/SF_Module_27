@@ -5,10 +5,9 @@
 void Messages::get_messages(ISubject* chat) {
     // Communication Establishment
     TCP_Server::processRequest();
-    // bool flag = true;
-
+   
     while(true) {
-        { // FIX ME!!!!
+        {
             struct sockaddr_in client;
             socklen_t length = sizeof(client);
             int connection = accept(TCP_Server::socket_file_descriptor,
@@ -21,16 +20,11 @@ void Messages::get_messages(ISubject* chat) {
                 std::thread th1([this, chat, connection]() {
                     this->receive_message(chat, connection, std::ref(mtx));
                 });
-
-                // receive_message(chat, connection, mtx);
-
                 // закрываем поток
                 th1.join();
             }
         }
     }
-    // очищает (устанавливает в нули) буфер message размером MESSAGE_LENGTH
-    // bzero(TCP_Server::buff, MESSAGE_LENGTH);
     // закрываем сокет, завершаем соединение
     close(TCP_Server::socket_file_descriptor);
 }

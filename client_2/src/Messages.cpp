@@ -9,7 +9,8 @@ template <typename T> Messages<T>::~Messages() {
 template <typename T> nlohmann::json Messages<T>::send_message(const nlohmann::json& json) {
     // преобразование JSON в строку
     std::string json_str_message = json.dump();
-    
+    // преобразуем строку в байты
+    // const char* message = json_str_message.c_str();
     // открываем сокет клиента, создаем соединение с сервером
     TCP_Client::processMessage();
     // передача сообщения через сокет

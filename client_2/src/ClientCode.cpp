@@ -57,12 +57,8 @@ void ClientCode::start() {
             break;
         }
         case '6': {
-            ///if(user->update(6)) {
-                std::cout << "\nExit!" << std::endl;
-                flag = false;
-            //} else {
-                //std::cout << "\nFailed! Try again." << std::endl;
-            //}
+            std::cout << "\nExit!" << std::endl;
+            flag = false;
             break;
         }
         default: {

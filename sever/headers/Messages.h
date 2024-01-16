@@ -2,7 +2,7 @@
 #include <map>
 #include <mutex>
 #include "ISubject.h"
-#include "jsonHandler.h"
+#include "Logger.h"
 
 class Messages {
   public:

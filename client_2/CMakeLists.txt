@@ -5,7 +5,6 @@ project(Project_3) # Замените "MyProject" на имя вашего пр�
 # Укажите исходные файлы вашего проекта
 set(SOURCES
     src/main.cpp
-    src/Chat.cpp
     src/ClientCode.cpp
     src/jsonHandler.cpp
     src/Messages.cpp
